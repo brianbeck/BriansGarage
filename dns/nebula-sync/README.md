@@ -9,6 +9,8 @@ I use this setup to keep my **primary and secondary Pi-hole DNS servers** in syn
 - Local domain name resolution
 - High availability and redundancy
 
+I run the nebula-sync container on my Synology NAS and am notified by email if it has a problem.
+
 ---
 
 ## 🔍 What Nebula Sync Is
