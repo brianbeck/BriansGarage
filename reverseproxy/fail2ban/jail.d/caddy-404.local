@@ -1,0 +1,11 @@
+[caddy-404-scanner]
+enabled = true
+filter = caddy-404
+logpath = /var/log/caddy/access.log
+action = nftables-allports
+
+maxretry = 20
+findtime = 60
+bantime = 3600
+
+ignoreip = 127.0.0.1/8 192.168.20.0/24

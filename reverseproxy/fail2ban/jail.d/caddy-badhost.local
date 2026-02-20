@@ -1,0 +1,11 @@
+[caddy-badhost]
+enabled = true
+filter = caddy-badhost
+logpath = /var/log/caddy/access.log
+action = nftables-allports
+
+maxretry = 5
+findtime = 300
+bantime = 86400
+
+ignoreip = 127.0.0.1/8 192.168.20.0/24
