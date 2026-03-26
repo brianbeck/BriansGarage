@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 15s # How often to scrape targets
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['prometheus:9090'] # Target is the Prometheus service name
+
+  - job_name: minio
+    bearer_token_file: /etc/prometheus/secrets/minio_bearer_token
+    metrics_path: /minio/v2/metrics/cluster
+    static_configs:
+      - targets:
+          - santacruz.brianbeck.net:9000
+

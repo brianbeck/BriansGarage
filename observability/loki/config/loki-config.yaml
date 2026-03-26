@@ -1,0 +1,68 @@
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+
+common:
+  path_prefix: /loki
+  replication_factor: 1
+  ring:
+    instance_addr: 127.0.0.1
+    kvstore:
+      store: inmemory
+
+schema_config:
+  configs:
+    - from: 2024-01-01
+      store: tsdb
+      object_store: s3
+      schema: v13
+      index:
+        prefix: loki_index_
+        period: 24h
+
+storage_config:
+  # TSDB shipper writes local index files and ships them to object storage
+  tsdb_shipper:
+    active_index_directory: /loki/index
+    cache_location: /loki/index_cache
+    # Cache TTL trades disk for query speed. Higher TTL = more disk use.  [oai_citation:0‡Grafana Labs](https://grafana.com/docs/loki/latest/configure/storage/?utm_source=chatgpt.com)
+    cache_ttl: 12h
+
+  aws:
+    # No scheme here (no http://)
+    endpoint: 192.168.20.191:9000
+    bucketnames: loki-data
+    access_key_id: ${MINIO_ACCESS_KEY_ID}
+    secret_access_key: ${MINIO_SECRET_ACCESS_KEY}
+    s3forcepathstyle: true
+    insecure: true
+
+ingester:
+  wal:
+    enabled: true
+    dir: /loki/wal
+
+  # Reduce small chunks/object churn:
+  # Loki defaults are max_chunk_age=2h, chunk_idle_period=30m  [oai_citation:1‡Grafana Labs](https://grafana.com/docs/loki/latest/configure/bp-configure/?utm_source=chatgpt.com)
+  chunk_target_size: 1536000   # ~1.5MB compressed target  [oai_citation:2‡Grafana Labs](https://grafana.com/docs/loki/latest/configure/bp-configure/?utm_source=chatgpt.com)
+  chunk_idle_period: 1h        # flush less often on low-volume streams (fewer small chunks)
+  max_chunk_age: 2h            # keep default-ish for safety
+  chunk_retain_period: 30s     # hold flushed chunks briefly for late arrivals
+
+  lifecycler:
+    ring:
+      replication_factor: 1
+
+compactor:
+  working_directory: /loki/compactor
+  compaction_interval: 10m
+
+  # Optional but recommended so data doesn’t “live forever”.
+  # Retention is handled by the compactor.  [oai_citation:3‡Grafana Labs](https://grafana.com/docs/loki/latest/operations/storage/retention/?utm_source=chatgpt.com)
+  retention_enabled: true
+  # Docs note delete_request_store is needed when retention is enabled.  [oai_citation:4‡Grafana Labs](https://grafana.com/docs/loki/latest/operations/storage/logs-deletion/?utm_source=chatgpt.com)
+  delete_request_store: s3
+
+limits_config:
+  retention_period: 30d

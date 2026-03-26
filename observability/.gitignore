@@ -1,0 +1,5 @@
+.env
+prometheus/secrets/
+grafana/data/
+loki/data/
+promtail/data/
