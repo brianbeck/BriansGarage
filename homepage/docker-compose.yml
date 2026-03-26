@@ -1,0 +1,13 @@
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    ports:
+      - 3500:3000
+    volumes:
+      - /volume1/docker/homepage/config:/app/config # Make sure your local config directory exists
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /volume1/docker/homepage/images:/app/public/images
+    env_file: .env
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: brianbeck.net,192.168.20.191:3500,santacruz.brianbeck.net:3500,santacruz.beck.casa:3500

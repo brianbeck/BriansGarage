@@ -1,0 +1,153 @@
+- Networking:
+    - Router:
+        icon: edgeos.png
+        href: http://192.168.20.1
+        description: Ubiquity EdgeOS Router
+
+    - UniFi:
+        icon: unifi.png
+        href: https://192.168.20.201:8443
+        description: Network Stats
+        widget:
+          type: unifi
+          url: https://192.168.20.201:8443
+          username: {{HOMEPAGE_VAR_UNIFI_USERNAME}}
+          password: {{HOMEPAGE_VAR_UNIFI_PASSWORD}}
+          verify-ssl: false
+          fields: ["uptime", "lan_users", "wlan_users", "lan_devices"]
+
+    - Pi-hole:
+        icon: pi-hole.png
+        href: http://192.168.20.201/admin # Link for clicking the card
+        description: Primary DNS
+        ping: 192.168.20.201
+        widget:
+          type: pihole
+          url: http://192.168.20.201 # Base URL for the API
+          version: 6 # Remove if using Pi-hole v5
+          key: {{HOMEPAGE_VAR_PIHOLE_PRIMARY_KEY}}
+
+    - Pi-hole:
+        icon: pi-hole.png
+        href: http://192.168.20.202/admin # Link for clicking the card
+        description: Secondary DNS
+        ping: 192.168.20.202
+        widget:
+          type: pihole
+          url: http://192.168.20.201 # Base URL for the API
+          version: 6 # Remove if using Pi-hole v5
+          key: {{HOMEPAGE_VAR_PIHOLE_SECONDARY_KEY}}
+
+    - Proxmox:
+        icon: proxmox.png
+        href: https://192.168.20.200:8006
+        widget:
+          type: proxmox
+          url: https://192.168.20.200:8006
+          username: {{HOMEPAGE_VAR_PROXMOX_USERNAME}}
+          password: {{HOMEPAGE_VAR_PROXMOX_PASSWORD}}
+          node: pve
+
+- Services:
+    - Google Workspace:
+        icon: google-admin.png # Uses the built-in icon
+        href: https://admin.google.com
+        description: Beck.Casa Management
+        #ping: beck.casa
+
+    - Trello:
+        icon: atlassian-trello.png
+        href: https://trello.com
+        description: Dashboard
+
+    - MinIO:
+        description: S3 Compatible Object Storage
+        href: http://santacruz.brianbeck.net:9090
+        icon: minio.png # or use an MDI icon name like 'mdi-cloud'
+        siteMonitor: http://santacruz.brianbeck.net:9000/minio/health/ready
+        widget:
+          type: prometheusmetric
+          url: http://santacruz.brianbeck.net:9890
+          refreshInterval: 60000
+          metrics:
+            - label: Used Storage
+              query: sum(minio_cluster_usage_total_bytes)
+              format:
+                type: bytes
+            - label: Free Storage
+              query: sum(minio_cluster_capacity_usable_free_bytes)
+              format:
+                type: bytes
+            - label: Total Usable
+              query: sum(minio_cluster_capacity_usable_total_bytes)
+              format:
+                type: bytes
+
+    - Prometheus:
+        icon: prometheus.png
+        href: http://santacruz.brianbeck.net:9890
+        widget:
+          type: prometheus
+          url: http://santacruz.brianbeck.net:9890
+
+    - Loki Total Logs:
+        icon: loki.png
+        href: http://santacruz.brianbeck.net:3100
+        widget:
+          type: customapi
+          url: "http://santacruz.brianbeck.net:3100/loki/api/v1/query?query=sum(count_over_time(%7Bjob%3D~%22.%2B%22%7D%5B15m%5D))%20or%20vector(0)"
+          refreshInterval: 30000
+          mappings:
+            - field: data.result.0.value.1
+              label: Total Logs (15m)
+              format: number
+
+    - Loki Error Logs:
+        icon: loki.png
+        href: http://santacruz.brianbeck.net:3100
+        widget:
+          type: customapi
+          url: "http://santacruz.brianbeck.net:3100/loki/api/v1/query?query=sum(count_over_time(%7Bdetected_level%3D%22error%22%7D%5B15m%5D))%20or%20vector(0)"
+          refreshInterval: 30000
+          mappings:
+            - field: data.result.0.value.1
+              label: Error Logs (15m)
+              format: number
+
+    - Loki auth.log Events:
+        icon: loki.png
+        href: http://santacruz.brianbeck.net:3100
+        widget:
+          type: customapi
+          url: "http://santacruz.brianbeck.net:3100/loki/api/v1/query?query=sum(count_over_time(%7Bfilename%3D%22%2Fhost%2Fvar%2Flog%2Fauth.log%22%7D%5B15m%5D))%20or%20vector(0)"
+          refreshInterval: 30000
+          mappings:
+            - field: data.result.0.value.1
+              label: auth.log Events (15m)
+              format: number
+
+- Observability:
+    - Grafana:
+        icon: grafana
+        href: http://santacruz.brianbeck.net:3000
+        description: Observability & Dashboards
+        widget:
+          server: my-docker # The docker server that was configured
+          container: grafana # The name of the container you'd like to connect
+          type: grafana
+          url: http://santacruz.brianbeck.net:3000
+          username: {{HOMEPAGE_VAR_GRAFANA_USERNAME}}
+          password: {{HOMEPAGE_VAR_GRAFANA_PASSWORD}}
+          fields:
+            ["dashboards", "datasources", "totalalerts", "alertstriggered"]
+
+- Tools:
+    - n8n:
+        icon: n8n.png
+        href: https://n8n.brianbeck.net
+        description: IFTTT Style Automation
+
+#    - Raindrop:
+#        icon: raindrop.png
+#        href: https://xxx.xxx.xxx
+#        description: Book Marks Manager

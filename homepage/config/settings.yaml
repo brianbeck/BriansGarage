@@ -1,0 +1,18 @@
+# General Settings
+title: Homepage Constellation Court
+theme: dark
+color: zinc
+headerStyle: clean
+useEqualHeights: true #<- This is a must!
+hideVersion: true
+target: _self
+#background: https://i.ibb.co/hMWFX6D/mountain-clouds.gif
+background:
+  image: /images/OrangeAndBlue.png
+
+providers:
+  openweathermap: openweathermapapikey
+  weatherapi: weatherapiapikey
+
+# layout: the order to show each of the sections defined in services.yaml
+# headers / labels are hidden - number of columns per section is set here

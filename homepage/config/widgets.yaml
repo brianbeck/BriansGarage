@@ -1,0 +1,21 @@
+# widgets.yaml defines the top header section of the page, which is then followed by showing the services
+ 
+- resources:
+    cpu: true
+    memory: true
+    disk: /
+
+- search:
+    provider: duckduckgo
+    target: _blank
+ 
+- openmeteo:
+    label: Redwood Shores
+    latitude: 37.53679767829386
+    longitude: -122.2395769029348
+    timezone: America/Los_Angeles
+    units: imperial # or metric
+    cache: 15
+    format:
+      maximumFractionDigits: 0
+    
